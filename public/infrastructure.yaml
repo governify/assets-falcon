@@ -1,0 +1,42 @@
+internal:
+  render:
+    default: 'angular'
+    angular: 'http://falcon-render'
+  assets:
+    default: 'theia'
+    theia: 'http://falcon-assets-manager'
+  reporter:
+    default: 'grafana'
+    grafana: 'http://falcon-reporter'
+  registry:
+    default: 'standard'
+    standard: 'http://falcon-registry'
+  collector:
+    default: 'dynamic'
+    dynamic: 'http://falcon-collector-dynamic'
+  dashboard:
+    default: 'grafana'
+    grafana: 'http://falcon-dashboard:3000'
+  database:
+    default: 'mongo-registry'
+    mongo-registry: 'mongodb://falcon-mongo-registry'
+    influx-reporter: 'http://falcon-influx-reporter:8086'
+external:
+  render:
+    default: 'angular'
+    angular: 'https://ui{{dns.falcon}}'
+  assets:
+    default: 'theia'
+    theia: 'https://assets{{dns.falcon}}'
+  reporter:
+    default: 'grafana'
+    grafana: 'https://reporter{{dns.falcon}}'
+  registry:
+    default: 'standard'
+    standard: 'https://registry{{dns.falcon}}'
+  dashboard:
+    default: 'grafana'
+    grafana: 'https://dashboard{{dns.falcon}}'
+dns:
+  default: 'falcon'
+  falcon: '$_[SERVICES_PREFIX]$_[DNS_SUFFIX]'

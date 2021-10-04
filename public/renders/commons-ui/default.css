@@ -1,0 +1,99 @@
+/* BS ICONS LIB */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css");
+
+html, body {
+    height: 100%!important;
+    width: 100%!important;
+    user-select: none;
+}
+.h4, h4 {
+    font-size: 20px;
+}
+i {
+    font-size: 18px;
+}
+td {
+    text-transform: capitalize;
+}
+select:disabled {
+    color: #979797;
+}
+.table>:not(:last-child)>:last-child>* {
+    border-bottom-color: gainsboro;
+    border-bottom-width: 1;
+}
+.container{
+    max-width: 100%;
+}
+.alert-custom{
+    top: 0;
+    position: fixed;
+    margin-top: 20px;
+    min-width: 1444;
+    width: calc(100% - 30px);
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+}
+.main-wrapper{
+    padding: 30px 0 30px 0;
+    min-width: 1444;
+}
+.card{
+    margin-bottom: 0;
+    background-color: rgba(0,0,0,.02);;
+}
+.service-panel{
+    background-color: white;
+}
+.card-header{
+    background-color: rgba(0,0,0,.03);
+}
+.clickable{
+    cursor: pointer;
+}
+.sub-panel-container{
+    display: grid;
+    grid-template-columns: 1fr 5fr 4fr 1.5fr;
+    grid-column-gap: 20px;
+    padding: 10px 10px;
+}
+.table tr{
+    height: 60px;
+    text-align: center;
+}
+.table td,th{
+    vertical-align: middle!important;
+    text-align: center;
+}
+.service-down{
+    background: rgb(255, 230, 230);
+    color: red
+}
+.service-warn{
+    background: rgb(255, 250, 232);
+    color: orange
+}
+.service-down:hover{
+    color: red!important;
+}
+.service-warn:hover{
+    color: orange!important;
+}
+
+/* BUTTONS COLUMN */
+.button-tr > td > button{
+    cursor: pointer;
+    background: transparent;
+    border: none;
+}
+.button-tr > td > button:hover{
+    color: blue;
+}
+.button-tr > td > button:active{
+    color: black;
+}
+.button-tr > td > button:disabled{
+    color: #CECECE;
+    cursor: default;
+}

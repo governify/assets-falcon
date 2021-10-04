@@ -1,0 +1,263 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by TEMPLATED
+http://templated.co
+Released for free under the Creative Commons Attribution License
+Name       : StoneWork 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20140228
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<link href="https://fonts.googleapis.com/css?family=Didact+Gothic" rel="stylesheet" />
+	<link href="$_[infrastructure.external.assets.default]/api/v1/public/renders/index/default.css" rel="stylesheet" type="text/css" media="all" />
+	<link href="$_[infrastructure.external.assets.default]/api/v1/public/renders/index/fonts.css" rel="stylesheet" type="text/css" media="all" />
+
+	<!--[if IE 6]><link href="default_ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+
+</head>
+
+<style>
+	body {
+		background: url("$_[infrastructure.external.assets.default]/api/v1/public/renders/index/images/blue_mountains_1.jpg") !important;
+		background-size: auto !important;
+		background-attachment: fixed !important;
+	}
+
+    .container{
+        max-width: 1200px !important;
+    }
+</style>
+
+<body>
+
+	<div id="wrapper" style="padding: 0 0 40px 0; margin: 5vh 0; min-height: 90vh;">
+		<div id="three-column" class="container" style="margin: 0; padding: 0; width: 100%;">
+            
+			<!-- ---------------- Buttons ---------------- -->
+        	<span ng-if="!initialsetup && !setupdomain && !setuptpa && !edittpa" class="col-xs-offset-9" 
+				style="position:absolute; top:10px; left:10px; margin:0;">				
+				<!--<button class="btn btn-info" ng-click="editDefaultTPA()">
+					Edit default TPA
+				</button>-->
+				<a href="./render?model=$_[infrastructure.internal.assets.default]/api/v1/public/renders/commons-ui/model.json&view=$_[infrastructure.internal.assets.default]/api/v1/public/renders/commons-ui/view.html&ctrl=$_[infrastructure.internal.assets.default]/api/v1/public/renders/commons-ui/controller.js"
+					class="btn btn-primary btn-sm">
+					Admin UI
+				</a>
+			</span>
+        
+        <!--
+			<span ng-if="!initialsetup && !setupdomain && !setuptpa && !edittpa" class="col-xs-offset-9" style="position:absolute; top:10px; right:10px; margin:0;">
+				<a href="https://github.com/isa-group/governify-metrics/tree/master/bluejay" target="_blank" class="btn btn-primary">
+					Metrics library
+				</a>
+				<a href="https://dashboard.bluejay.governify.io/dashboard/script/dashboardLoader.js?orgId=1&dashboardURL=https:%2F%2Freporter.bluejay.governify.io%2Fapi%2Fv4%2Fdashboards%2Ftpa-37d5adde%2Fgeneral-class" target="_blank"
+					class="btn btn-success">
+					General Dashboard
+				</a>
+			</span> -->
+
+			<!-- ---------------- Top introduction ---------------- -->
+			<div class="title" style="padding: 55px 0; margin: 0">
+				<h2>GALIBO</h2>
+				<span class="byline">Sistema de gestión de acuerdos de Nivel de Servicio (CHIE) </span>
+			</div>
+			<hr style="margin-top: 0;" />
+
+			<!-- ---------------- Alerts (FIXED to top)---------------- -->
+			<div ng-if="displayItems.statusType !== undefined"
+				class="alert alert-dismissible {{displayItems.statusType === 'error' ? 'alert-danger' : 'alert-success'}}"
+				role="alert" style="position: absolute; width: 100%; z-index: 1;top: 150px;">
+				<button type="button" class="close" aria-label="Close"
+					ng-click="displayItems.statusType = undefined"><span
+						aria-hidden="true"></span>&times;</span></button>
+				<strong>{{displayItems.statusType === 'error' ? 'Error!' : 'Success!'}}</strong>
+				{{displayItems.statusMessage}}
+			</div>
+
+			<!-- ---------------- Initial Setup - REMAKE? ---------------- -->
+			<!-- <span ng-if="initialsetup">
+					<h3>Initial setup</h3><br>
+					<span style="font-size: 18px">
+						<span ng-if="setupdomain" style="font-weight: bold; color: darkslategray">1. Root domain</span>
+						<span ng-if="!setupdomain && (setuptoken || setuptpa)" style="color: gray"><del>1. Root
+								domain</del></span>
+						<span ng-if="!setupdomain && !setuptoken && !setuptpa">1. Root domain</span>
+						—
+						<span ng-if="setuptoken" style="font-weight: bold; color: darkslategray">2. Pivotal Tracker
+							token</span>
+						<span ng-if="!setuptoken && setuptpa" style="color: gray"><del>2. Pivotal Tracker
+								token</del></span>
+						<span ng-if="!setuptoken && !setuptpa">2. Pivotal Tracker token</span>
+						—
+						<span ng-if="setuptpa" style="font-weight: bold; color: darkslategray">3. Default TPA</span>
+						<span ng-if="!setuptpa">3. Default TPA</span>
+					</span>
+					<br><br><br>
+					<div ng-if="!setupdomain && !setuptoken && !setuptpa" class="col-xs-10 col-xs-offset-1">
+						<p>It seems that this is the first time you access the Eagle UI. Therefore, you need to
+							complete the initial setup before using the application.</p>
+						<button class="btn btn-success" type="submit" ng-click="acceptDomain()">OK</button>
+					</div>
+				</span>
+				<span ng-if="setupdomain" class="col-xs-10 col-xs-offset-1">
+					<p>First, you must specify your domain. Do not include any initial or trailing dots.</p>
+					<p>For example, if you are visiting this page through 'ui.eagle.test.com', please enter
+						'eagle.test.com', without the apostrophes.</p>
+					<p>The system will try to automatically retrieve the domain and fill in the field below.</p>
+					<div class="form-group">
+						<label for="domn">Root domain:</label>
+						<div class="input-group col-xs-4 col-xs-offset-4">
+							<input type="text" class="form-control" id="domn" ng-model="domn">
+							<span class="input-group-btn">
+								<button class="btn btn-success" type="submit" ng-click="setDomain(domn)">
+									OK
+								</button>
+							</span>
+						</div>
+					</div>
+				</span>
+				<span ng-if="setuptoken" class="col-xs-10 col-xs-offset-1">
+					<p>Now, you will need to enter your Pivotal Tracker token. This token can be retrieved from your
+						Pivotal Tracker profile. Click on your username in the top right corner of the Pivotal Tracker
+						website, click Profile, and find the API token section.</p>
+					<p> It will be used to display and manage the projects through this UI, as
+						well as to compute the different metrics.</p>
+					<div class="form-group">
+						<label for="domn">Pivotal Tracker token:</label>
+						<div class="input-group col-xs-4 col-xs-offset-4">
+							<input type="text" class="form-control" id="token" ng-model="token">
+							<span class="input-group-btn">
+								<button class="btn btn-success" type="submit" ng-click="setToken(token)">
+									OK
+								</button>
+							</span>
+						</div>
+					</div>
+				</span> -->
+
+			<!-- ---------------- Courses selection and projects ---------------- -->
+			<span ng-if="setuptpa || edittpa" class="col-xs-10 col-xs-offset-1">
+				<span ng-if="!edittpa">
+					<p>Finally, please set up the following TPA. This TPA will be set as a default template. You may
+						edit
+						the different metrics and objectives. You will also be able to modify the TPA later, by clicking
+						on the 'Edit default TPA' button that will appear on the lower right corner of this page.</p>
+					<p>Please note that any occurrence of '1010101010' inside the TPA will be replaced by a project ID
+						when a TPA for said project is created. Do not use that pattern unless you want it to be
+						replaced</p>
+				</span>
+				<div class="form-group">
+					<label for="deftpa">Default TPA:</label>
+					<div class="input-group col-xs-10 col-xs-offset-1" style="margin: 0 25px; width: unset;">
+						<textarea class="form-control" rows="20" id="deftpa" ng-model="deftpa"
+							style="font-family: monospace"></textarea>
+						<button class="btn btn-success" type="submit" ng-click="updateDefaultTPA(deftpa)">
+							<span ng-if="setuptpa">Create</span>
+							<span ng-if="edittpa">Update</span>
+						</button>
+					</div>
+				</div>
+			</span>
+
+			<!-- ---------------- Courses selection and projects ---------------- -->
+
+			<div style="padding: 15px 0 50px 0">
+				<div class="row" ng-if="finishloading" style="width: 100%; margin: 0;">
+					<div class="" style="padding: 0;">
+                        <div class="card" style="margin: 50 100 15 100; padding: 10 30 25 30;">
+                            <div class="card-body">
+                            <h3 class="card-title" style="padding-bottom: 20px;">Oficina técnica de interoperabilidad</h3>
+                                <ul>
+                                    <li style="padding: 0.5em; text-align: left; font-size: 18px;">
+                                        <p class="card-subtitle mb-2 text-muted" style="display: inline-block;">Gestion de credenciales</p>
+                                        <a target="_blank"
+                                            href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/oti_gc_ans/oti-gestion-credenciales"
+                                            class="btn btn-success"
+                                            style="margin-left: 0.5em; padding: 0 5px; float: right;">
+                                            Cuadro de mandos
+                                        </a>
+                                        <a href="./render?model=$_[infrastructure.internal.assets.default]/api/v1/public/renders/renders/OT2/oti.json&view=$_[infrastructure.internal.assets.default]/api/v1/public/renders/renders/OT2/oti.html&ctrl=$_[infrastructure.internal.assets.default]/api/v1/public/renders/renders/OT2/oti.js"
+                                            target="_blank" class="btn btn-info"
+                                            style="margin-left: 0.5em;padding: 0 5px; float: right; color:white;">
+											ANS
+										</a>
+                                    </li>
+                                </ul>
+                            </div>
+						</div>
+					</div>
+					<div class="" style="padding: 0;">
+						<div class="card" style="margin: 50 100 50 100; padding: 10 50 25 50;">
+							<h3 style="padding-bottom: 20px;">Servicios Nexo</h3>
+							<ul>
+								<li style="padding: 0.5em; text-align: left; font-size: 18px;">
+									<p class="card-subtitle mb-2 text-muted">Carpeta ciudadana</p>
+									<a href="./render?model=$_[infrastructure.internal.assets.default]/api/v1/public/renders/renders/OT1/nexo.json&view=$_[infrastructure.internal.assets.default]/api/v1/public/renders/renders/OT1/nexo.html&ctrl=$_[infrastructure.internal.assets.default]/api/v1/public/renders/renders/OT1/nexo.js"
+										target="_blank" class="btn btn-info"
+										style="margin-left: 0.5em;padding: 0 5px; float: right; color:white;">
+										ANS
+									</a>
+								</li>
+
+								<li style="padding-left: 1.5em; text-align: left;">
+									<p class="card-subtitle mb-2 text-muted" >Vista completa</p>
+									<a target="_blank"
+										href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-individual-completo&var-Servicio=All&kiosk=tv&from=now-60d&to=now"
+										class="btn btn-success"
+										style="margin-left: 0.5em; padding: 0 5px; float: right;">
+										Detallado
+									</a>
+									<a target="_blank"
+										href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-general-completo&var-Servicio=All&kiosk=tv&from=now-60d&to=now"
+										class="btn btn-success"
+										style="margin-left: 0.5em; padding: 0 5px; float: right;">
+										General
+									</a>
+									<a target="_blank"
+										href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-agrupado-consejerias&var-Servicio=All&kiosk=tv&from=now-60d&to=now"
+										class="btn btn-success"
+										style="margin-left: 0.5em; padding: 0 5px; float: right;">
+										Agrupado consejerías
+									</a>
+								</li>
+
+								<li class="customliConsejerias" style="padding-left: 1.5em; padding-top:0.5em; text-align: left;">
+									<p class="card-subtitle mb-2 text-muted">Vista por consejería</p>
+								</li>
+
+								<li ng-repeat="consejeria in consejerias" class="customliConsejerias" style="padding: 0.20em; margin-left:2.0em; text-align: left; display:block">									
+									<i>◽ {{consejeria.name}}</i>
+									<a target="_blank"
+										href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-individual{{consejeria.urlVariables}}&var-Consejeria={{consejeria.name}}&kiosk=tv&from=now-60d&to=now"
+										class="btn btn-success"
+										style="margin-left: 0.5em; padding: 0 5px; float: right;">
+										Detallado
+									</a>
+									<a target="_blank"
+										href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-general{{consejeria.urlVariables}}&var-Consejeria={{consejeria.name}}&kiosk=tv&from=now-60d&to=now"
+										class="btn btn-success"
+										style="margin-left: 0.5em; padding: 0 5px; float: right;">
+										General
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="version" style="position: absolute; bottom: 10px; right:10px; color:black">
+			{{model.version}}
+		</div>
+	</div>
+</body>
+
+</html>

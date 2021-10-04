@@ -1,0 +1,14 @@
+[
+    {
+        "scope": {},
+        "period": {
+            "from": "2020-11-15T23:00:00.000Z",
+            "to": "2020-12-15T22:59:59.999Z"
+        },
+        "evidences": {
+            "M05_evidence": true
+        },
+        "id": 666392,
+        "comment": "Test"
+    }
+]

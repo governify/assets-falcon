@@ -1,0 +1,4 @@
+{
+"registry_endpoint": "$_[infrastructure.external.registry.default]",
+"registry_apiVersion": "6"
+}

@@ -1,0 +1,39 @@
+internal:
+  render:
+    default: 'angular'
+    angular: 'http://host.docker.internal:5100'
+  assets:
+    default: 'theia'
+    theia: 'http://host.docker.internal:5200'
+  reporter:
+    default: 'grafana'
+    grafana: 'http://host.docker.internal:5300'
+  registry:
+    default: 'standard'
+    standard: 'http://host.docker.internal:5400'
+  collector:
+    default: 'dynamic'
+    dynamic: 'http://host.docker.internal:5501'
+  dashboard:
+    default: 'grafana'
+    grafana: 'http://host.docker.internal:5600'
+  database:
+    default: 'mongo-registry'
+    mongo-registry: 'mongodb://host.docker.internal:5001'
+    influx-reporter: 'http://host.docker.internal:5002'
+external:
+  render:
+    default: 'angular'
+    angular: 'http://localhost:5100'
+  assets:
+    default: 'theia'
+    theia: 'http://localhost:5200'
+  reporter:
+    default: 'grafana'
+    grafana: 'http://localhost:5300'
+  registry:
+    default: 'standard'
+    standard: 'http://localhost:5400'
+  dashboard:
+    default: 'grafana'
+    grafana: 'http://localhost:5600'
