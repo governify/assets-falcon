@@ -51,10 +51,9 @@ async function makeRestoreInflux(config){
     });
 
     for (const db of dbs) {
-        if(!db.startsWith('_')){
-            connection.dropDatabase(db)
-        }
+        await connection.dropDatabase(db)
     }
+    
     execSync(`influxd restore -portable -host ${hostInflux[0]}:8088 ${DIR}`)
 }
 
