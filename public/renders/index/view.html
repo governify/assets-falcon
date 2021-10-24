@@ -72,18 +72,36 @@
                 </div>
             </div>
 
-            <!-- MONITORED INFRASTRUCTURES -->
+            <!-- DIVIDER / CARD WHEN BLANK -->
             <hr ng-if="finishloading && notmonitoring.length !== 0 && alreadymonitoring.length !== 0" 
                 id="separator" class="solid" style="margin: 0 50px;">
             </hr>
 
+            <div ng-if="finishloading && notmonitoring.length === 0 && alreadymonitoring.length === 0" style="padding: 15px 0 50px 0">
+               <div style="padding: 0;">
+                    <div class="card" style="margin: 50 100 15 100; padding: 10 30 25 30;">
+                        <div class="card-body">
+                            <h1 style="padding:0.5em">😔</h1>
+                            <h3 style="color:#BFBFBF"> No se han encontrado infraestructuras para monitorear</h3>
+                            <button disabled
+                                ng-click="" 
+                                class="btn btn-primary"
+                                style="padding: 2px 5px; color:white; margin-top: 20px;">
+                                ⏏ &ThickSpace;Crear acuerdo&ThickSpace;
+                            </button>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+
+            <!-- MONITORED INFRASTRUCTURES -->
             <div style="padding: 15px 0 50px 0">
                 <div ng-if="finishloading && alreadymonitoring.length !== 0" style="padding: 0;">
                     <div ng-repeat="tpa in alreadymonitoring" class="card" style="margin: 50 100 15 100; padding: 10 30 25 30;">
                         <a  ng-click="stop_monitoring(tpa.id);"
                             class="btn btn-danger"
                             style="position: absolute; left:10; top:10;padding: 2px 5px; color:white;">
-                            &ThickSpace;Dejar de Monitorear
+                            Dejar de Monitorear
                         </a>
                         <div class="card-body">
                         <h3 class="card-title" style="padding-bottom: 20px;">{{tpa.name ? tpa.name:tpa.id}}</h3>
