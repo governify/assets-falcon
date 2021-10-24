@@ -1,0 +1,29 @@
+{   
+    "name": "governify agreement template",
+    "id": "agreement_template",
+    "version": "1.0.0",
+    "type": "agreement",
+    "context": {
+        "validity": {
+            "initial": "2021-01-01",
+            "timeZone": "Europe/Madrid"
+        },
+        "infrastructure": {
+        },
+        "definitions": {
+            "schemas": {},
+            "scopes": {
+            },
+            "collectors": {
+            },
+            "dashboards": {
+            }
+        }
+    },
+    "terms": {
+        "metrics": {
+        },
+        "guarantees": [
+        ]
+    }
+}

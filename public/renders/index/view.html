@@ -53,7 +53,7 @@
                         <h3 class="card-title" style="padding-bottom: 20px;">INFRAESTRUCTURAS DISPONIBLES</h3>
                             <ul>
                                 <!-- SLA -->
-                                <li ng-repeat="tpa in notmonitoring" style="padding: 0.5em; text-align: left; font-size: 18px;">
+                                <li ng-repeat="tpa in notmonitoring" style="padding: 2px 0.5em; text-align: left; font-size: 18px;">
                                     <p class="card-subtitle mb-2 text-muted" style="display: inline-block;">{{tpa.name ? tpa.name:tpa.id}}</p>
                                     <a  ng-click="start_monitoring(tpa);"
                                         class="btn btn-success"

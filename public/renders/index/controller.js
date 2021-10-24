@@ -22,7 +22,7 @@ function load_asset_tpas(){
         method: 'GET',
         url: `${assets_host}/info/${tpa_folder}`
     }).then(async response => {
-        var tpa_paths = response.data.files.map(file => `${tpa_folder}/${file.name}`);
+        var tpa_paths = response.data.files.filter(file => file.name !== 'tpa_template.json').map(file => `${tpa_folder}/${file.name}`);
         var asset_tpas = [];
         for(var tpa_path of tpa_paths){
             await $http({
