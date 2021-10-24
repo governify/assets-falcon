@@ -1,3 +1,4 @@
 public/database/backups/*
 public/renders/tpa/*
+!public/renders/tpa/render
 public/logs
