@@ -3,10 +3,10 @@ $scope.alreadymonitoring = [];
 $scope.finishloading = false;
 
 async function load(){
-    await load_mongo_tpas().then(async mongo_tpas => {
+    await load_registered_tpas().then(async registered_tpas => {
         await load_asset_tpas().then(asset_tpas => {
-            $scope.notmonitoring = asset_tpas.filter(assettpa => !mongo_tpas.map(mongotpa => mongotpa.id).includes(assettpa.id));
-            $scope.alreadymonitoring = mongo_tpas;
+            $scope.notmonitoring = asset_tpas.filter(assettpa => !registered_tpas.map(registeredtpa => registeredtpa.id).includes(assettpa.id));
+            $scope.alreadymonitoring = registered_tpas;
             $scope.finishloading = true
         });
     })
@@ -16,7 +16,7 @@ async function load(){
    and return array with {name, id} of each one */
 function load_asset_tpas(){
     var assets_host = '$_[infrastructure.internal.assets.default]/api/v1'
-    var tpa_folder = 'public/renders/tpa';
+    var tpa_folder = 'public/renders/tpa/agreements';
 
     return $http({
         method: 'GET',
@@ -43,18 +43,17 @@ function load_asset_tpas(){
         return [];
     });
 }
-/* Request registry for each json tpa inside tpa directory
+/* Read infrastructure.son file in private folder
    and return array with {name, id} of each one */
-function load_mongo_tpas(){
-    var registry_host = '$_[infrastructure.internal.registry.default]/api/v6'
-
+function load_registered_tpas(){
     return $http({
         method: 'GET',
-        url: `${registry_host}/agreements`
+        url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructure.json',
+        params: {private_key: '$_[PRIVATE_KEY]'}
     }).then(response => {
-        return response.data
+        return response.data;
     }).catch(err => {
-        console.log(err);
+        return [];
     });
 }
 /* Start monitoring infrastructure */

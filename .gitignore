@@ -1,5 +1,4 @@
 public/database/backups/*
-public/renders/tpa/*
-!public/renders/tpa/render
+public/renders/tpa/agreements
 public/logs
 private
