@@ -43,31 +43,84 @@ function load_asset_tpas(){
         return [];
     });
 }
-/* Read infrastructure.son file in private folder
+/* Read infrastructures.json file in private folder
    and return array with {name, id} of each one */
 function load_registered_tpas(){
     return $http({
         method: 'GET',
-        url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructure.json',
+        url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json',
         params: {private_key: '$_[PRIVATE_KEY]'}
     }).then(response => {
         return response.data;
     }).catch(err => {
+        if(err.status === 404){
+            $http({
+                method: 'POST',
+                url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json',
+                params: {private_key: '$_[PRIVATE_KEY]', createDirectories: true},
+                headers: {contentType: 'application/json'},
+                data: []
+            });
+        }
         return [];
     });
 }
+/* Requests registry for tpas in mongo */
+function load_mongo_tpas(){
+    return $http({
+        method: 'GET',
+        url: '$_[infrastructure.internal.registry.default]/api/v6/agreements'
+    }).then(response => {
+        return response.data;
+    }).catch(err => {
+        return [];
+    })
+}
 /* Start monitoring infrastructure */
-$scope.start_monitoring = function start_monitoring(tpa){
-    $http({
-        method: 'POST',
-        url: '$_[infrastructure.internal.registry.default]/api/v6/agreements',
-        data: tpa
-    }).then(() => {
-        //TODO Show success message?
-        load();
-    }).catch(() => {
-        //TODO Show error msg
-    });
+$scope.start_monitoring = async function start_monitoring(tpa){
+    var prom = [];
+    var registered_list = await load_registered_tpas();
+    var mongo_list = await load_mongo_tpas();
+
+    if(!mongo_list.map(el => el.id).includes(tpa.id)){
+        prom.push( $http({
+            method: 'POST',
+            url: '$_[infrastructure.internal.registry.default]/api/v6/agreements',
+            data: tpa 
+        }));
+    }
+
+    if(!registered_list.map(el => el.id).includes(tpa.id)) {
+        registered_list.push({id: tpa.id, name: tpa.name, services: tpa.context.definitions.group.services});
+        prom.push( $http({
+            method: 'PUT',
+            url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json',
+            params: {private_key: '$_[PRIVATE_KEY]'},
+            headers: {contentType: 'application/json'},
+            data: registered_list,
+        }));   
+    }
+    Promise.all(prom).then(() => load()).catch(() => {/* TODO show in view */});
+}
+/* Stop monitoring infrastructure*/
+$scope.stop_monitoring = async function stop_monitoring(tpa_id){
+    var prom = [];
+
+    prom.push( $http({
+        method: 'DELETE',
+        url: `$_[infrastructure.internal.registry.default]/api/v6/agreements/${tpa_id}`,
+    }));
+
+    var registered_list = await load_registered_tpas().then(res => res.filter(el => el.id !== tpa_id));
+    prom.push( $http({
+        method: 'PUT',
+        url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json',
+        params: {private_key: '$_[PRIVATE_KEY]'},
+        headers: {contentType: 'application/json'},
+        data: registered_list,
+    })); 
+
+    Promise.all(prom).then(() => load()).catch(() => {/* TODO show in view */});
 }
 
-load()
+load();

@@ -80,6 +80,11 @@
             <div style="padding: 15px 0 50px 0">
                 <div ng-if="finishloading && alreadymonitoring.length !== 0" style="padding: 0;">
                     <div ng-repeat="tpa in alreadymonitoring" class="card" style="margin: 50 100 15 100; padding: 10 30 25 30;">
+                        <a  ng-click="stop_monitoring(tpa.id);"
+                            class="btn btn-danger"
+                            style="position: absolute; left:10; top:10;padding: 2px 5px; color:white;">
+                            &ThickSpace;Dejar de Monitorear
+                        </a>
                         <div class="card-body">
                         <h3 class="card-title" style="padding-bottom: 20px;">{{tpa.name ? tpa.name:tpa.id}}</h3>
                             <ul>
@@ -114,7 +119,7 @@
                                 </li>
 
                                 <!-- SERVICES -->
-                                <li ng-repeat="service in tpa.context.definitions.group.services" style="padding: 0.20em; margin-left:2.0em; text-align: left; display:block">									
+                                <li ng-repeat="service in tpa.services" style="padding: 0.20em; margin-left:2.0em; text-align: left; display:block">									
 									<i>◽&ThickSpace;&ThickSpace;{{service}}</i>
 									<a target="_blank"
 										href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-individual{{consejeria.urlVariables}}&var-Consejeria={{consejeria.name}}&kiosk=tv&from=now-60d&to=now"
