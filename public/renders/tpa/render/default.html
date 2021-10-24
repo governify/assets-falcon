@@ -1,0 +1,220 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <link href="https://fonts.googleapis.com/css?family=Didact+Gothic" rel="stylesheet" />
+    <link href="$_[infrastructure.external.assets.default]/api/v1/public/renders/tpa/render/default.css" rel="stylesheet" type="text/css"
+        media="all" />
+    <link href="$_[infrastructure.external.assets.default]/api/v1/public/renders/index/fonts.css" rel="stylesheet" type="text/css"
+        media="all" />
+</head>
+
+<body>
+    <div id="wrapper" style="padding: 0 0 40px 0; margin: 5vh 0; min-height: 90vh;">
+        <div id="three-column" class="container" style="margin: 0; padding: 0; width: 100%;">
+
+            <!-- ---------------- Buttons ---------------- -->
+            <!-- Left -->
+            <div ng-if="modelLoaded" style="padding: 0; margin: 0;">
+                <span class="col-xs-offset-9" style="position:absolute; top:10px; left:10px; margin:0;">
+                    <a href="$_[infrastructure.external.registry.default]/api/v6/agreements/{{model.id}}" target="_blank" class="btn btn-info btn-sm">
+                        View source
+                    </a>
+                    <button class="btn btn-primary disabled btn-sm">
+                        Modify TPA
+                    </button>
+                </span>
+
+                <!-- Right -->
+                <span class="col-xs-offset-9" style="position:absolute; top:10px; right:10px; margin:0;">
+                    <a target="_blank"
+                        href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/{{model.id}}/main"
+                        class="btn btn-success btn-sm">
+                        Dashboard
+                    </a>
+                    <button type="button"
+                        class="tooltipbottom btn btn-sm {{displayItems.automaticComputation ? 'btn-info' : 'btn-danger'}}" ng-click="swapAutomaticComputation()">
+                        Automatic Computation: {{displayItems.automaticComputation ? 'Yes' : 'No'}}
+                        <span class="tooltipbottomtext">
+                            <li>ID: {{model.id}}</li>
+                            <li ng-if="displayItems.automaticComputation">Init: {{displayItems.automaticComputationInfo.init}}</li>
+                            <li ng-if="displayItems.automaticComputation">End: {{displayItems.automaticComputationInfo.end}}</li>
+                            <li ng-if="displayItems.automaticComputation">Interval: {{displayItems.automaticComputationInfo.interval}}</li>
+                            </span>
+                    </button>
+
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#metricsModal">Calculate Metrics</button>
+                </span>
+            </div>
+            
+            <!-- ---------------- Calculate metrics Modal ---------------- -->
+            <div id="metricsModal" class="modal fade" role="dialog" style="display: none;">
+                <div class="modal-dialog" style="max-width: 400px;">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" style="margin-left: 3rem;">Calculate metrics for a period (UTC)</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <!-- Form -->
+                        <div class="modal-body" style="text-align: left;">
+                            <label>Timezone offset:</label><br />
+                            <select ng-model="calculateMetrics.timezone" class="form-control">
+                                <option ng-repeat="timezone in calculateMetrics.timezones" value="{{timezone}}">
+                                    {{timezone}}
+                                </option>
+                            </select>
+                            <br />
+
+                            <label>Period starting date:</label><br />
+                            <input type="datetime-local" ng-model="calculateMetrics.from"
+                                value="{{calculateMetrics.from}}" class="form-control"><br />
+
+                            <label>Period end date:</label><br />
+                            <input type="datetime-local" ng-model="calculateMetrics.to" value="{{calculateMetrics.to}}"
+                                class="form-control"><br />
+
+                            <div class="form-check">
+                                <span>
+                                    <input type="checkbox" ng-model="calculateMetrics.agree" id="agreeCheck">
+                                    <label class="form-check-label" for="agreeCheck" style="margin-left: 3px; font-weight: bold;">I agree
+                                        to substitute existing TPA data.</label>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <!-- Alert -->
+                            <div class="alert {{calculateMetrics.error ? 'alert-danger' : 'alert-success'}}"
+                                ng-if="calculateMetrics.message" role="alert" style="text-align: left; width: 100%;">
+                                <span
+                                    class="glyphicon {{calculateMetrics.error ? 'glyphicon-exclamation-sign' : 'glyphicon-ok-sign'}}"
+                                    aria-hidden="true"></span>
+                                {{calculateMetrics.message}}
+                            </div>
+                            <!-- Buttons -->
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                            <a ng-click="calculateEventsMetrics(model.id)"
+                                class="btn {{calculateMetrics.message == 'TPA data is being generated for the period.' ? 'btn-warning disabled' : 'btn-primary'}} {{calculateMetrics.agree ? '' : 'disabled'}}">
+                                {{calculateMetrics.message == 'TPA data is being generated for the period.' ? 'In progress' : 'Compute'}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---------------- Top Bluejay Hero ---------------- -->
+            <div class="title" style="padding: 55px 0; margin: 0; display:flex; justify-content: center;">
+				<div onclick='location.href="/"' style="cursor: pointer;">
+					<h2>BLUEJAY</h2>
+					<span class="byline">Best Practices Auditor</span>
+				</div>
+			</div>
+			<hr style="margin-top: 0;" />
+
+            <!-- ---------------- Alerts (FIXED to top)---------------- -->
+            <div ng-if="displayItems.statusType !== undefined"
+				class="alert alert-dismissible fade show {{displayItems.statusType === 'error' ? 'alert-danger' : 'alert-warning'}}"
+				role="alert" style="position: absolute; width: 100%; z-index: 1;top: 150px;">
+				<button type="button" class="btn-close" aria-label="Close"
+					ng-click="displayItems.statusType = undefined"><span
+						aria-hidden="true"></button>
+				<span style="font-weight: bold;">{{displayItems.statusType === 'error' ? 'Error!' : 'Warning!'}}</span>
+				{{displayItems.statusMessage}}
+			</div>
+
+            <!-- ---------------- Project Loader ---------------- -->
+            <div ng-if="!modelLoaded"
+                style="position:absolute; left:50%; top:60%; margin-left: -171px; margin-top: -72px;">
+                <img src="./utils/img/loading1_big_lgbg.gif" style="height: 100px;" />
+                <span style="font-size: 25px; margin-top: 10px;" class="col-sm-12">Loading TPA information...</span>
+            </div>
+
+            <!-- ---------------- TPA Info ---------------- -->
+            <div nghide ng-show="modelLoaded && model" style="padding: 20px 20px;">
+                <!-- Scope Manager info -->
+                <div id="sco-header" class="row">
+                    <div class="col-xs-12 col-md-5" style="zoom: 0.75;text-align: left;width:max-content;">
+                        <div>
+                            <h2>
+                                Project name:
+                                {{displayItems.scopeManagerInfo.scope.name ? displayItems.scopeManagerInfo.scope.name : displayItems.scopeManagerInfo.scope.projectId}}
+                            </h2>
+                            <h3>
+                                TPA: {{model.id}}
+                            </h3>
+                        </div>
+                        <div>
+                            <span>
+                                <strong>APIs being used:</strong>
+                            </span>
+                            {{!displayItems.scopeManagerInfo.scope.identities ? 'Data could not be retrieved.' : ''}}
+                            <span
+                                ng-repeat="api in displayItems.scopeManagerInfo.scope.identities">{{api.source}}{{$last ? "" : ", "}}
+                            </span>
+                            <br>
+                            <span>
+                                <strong>Collectors being used:</strong>
+                            </span>
+                            <span ng-repeat="collector in collectorsUsed">{{collector}}{{$last ? "" : ", "}} </span>
+                            <br>
+                            <span>
+                                <strong>Start date:</strong>
+                            </span>
+                            <span>{{model.context.validity.initial}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="separator"></p>
+
+                <!-- Terms info -->
+                <div id="sco-tabs-container">
+                    <!-- Guarantees -->
+                    <h2 style="background-color: lightgray; margin: 10px -20px">Team practices</h2>
+                    <div style="text-align: left; padding: 0; width: 100%; font-family: sans-serif;" class="container">
+                        <div ng-repeat="g in model.terms.guarantees track by g.id" class="col-sm-12"
+                            style="padding: 2px; margin-bottom: 20px;">
+                            <div class="card card-success" style="padding: 0;">
+                                <div class="card-header">
+                                    <h5 style="margin: 5px 0;text-align: center">{{g.id}}</h5>
+                                </div>
+                                <div class="card-body" style="font-size: 10pt;">
+                                    <b>Objective</b>: <span style="font-size: 9pt;">{{g.of[0].objective}}</span>
+                                </div>
+                                <div class="card-footer" style="font-size: 10pt;">
+                                    <b>Description</b>: <span>{{g.description}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics -->
+                    <h2 style="background-color: lightgray; margin: 10px -20px">Metrics</h2>
+                    <div style="text-align: left; padding: 0; width: 100%; font-size: 10pt;" class="row g-3">
+                        <div ng-repeat="(key,val) in model.terms.metrics track by key" class=" col-sm-4"
+                            style="padding: 2px;">
+                            <div class="card card-info" style="padding: 0;">
+                                <div class="card-header">
+                                    <h5 style="margin: 5px 0;text-align: center;">{{key}}</h5>
+                                </div>
+                                <div class="card-body" style="height: 280px; font-family: monospace; padding:0">
+                                    <textarea
+                                        style="height: 100%; width: 100%; padding: 0; margin: 0; resize: none;">{{beautifyMetric(val.measure)}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Version -->
+        <div id="version" style="position: absolute; bottom: 10px; right:10px; color:black">
+            {{model.version}}
+        </div>
+    </div>
+</body>
