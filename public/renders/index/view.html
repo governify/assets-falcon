@@ -36,7 +36,7 @@
             <!-- ---------------- Basics ---------------- -->
             <div class="title" style="padding: 55px 0; margin: 0">
                 <h2>FALCON</h2>
-                <span>Sistema de monitorizaci&oacute;n de infraestructuras</span>
+                <span>Infrastructure monitorization system</span>
             </div>
       
             <div id="version" style="position: absolute; bottom: 10px; right:10px; color:black">
@@ -50,7 +50,7 @@
                 <div style="padding: 0;">
                     <div class="card" style="margin: 50 100 15 100; padding: 10 30 25 30;">
                         <div class="card-body">
-                        <h3 class="card-title" style="padding-bottom: 20px;">INFRAESTRUCTURAS DISPONIBLES</h3>
+                        <h3 class="card-title" style="padding-bottom: 20px;">AVAILABLE INFRASTRUCTURES</h3>
                             <ul>
                                 <!-- SLA -->
                                 <li ng-repeat="tpa in notmonitoring" style="padding: 2px 0.5em; text-align: left; font-size: 18px;">
@@ -58,7 +58,7 @@
                                     <a  ng-click="start_monitoring(tpa);"
                                         class="btn btn-success"
                                         style="margin-left: 0.5em;padding: 0 5px; float: right; color:white;">
-                                        ▶ &ThickSpace;Monitorear
+                                        ▶ &ThickSpace;Start monitoring
                                     </a>
                                     <a href="./render?model=$_[infrastructure.internal.assets.default]/api/v1/public/renders/index/model.json&view=$_[infrastructure.internal.assets.default]/api/v1/public/renders/tpa/default.html&ctrl=$_[infrastructure.internal.assets.default]/api/v1/public/renders/tpa/default.js"
                                         target="_blank" class="btn btn-info"
@@ -82,12 +82,12 @@
                     <div class="card" style="margin: 50 100 15 100; padding: 10 30 25 30;">
                         <div class="card-body">
                             <h1 style="padding:0.5em">😔</h1>
-                            <h3 style="color:#BFBFBF"> No se han encontrado infraestructuras para monitorear</h3>
+                            <h3 style="color:#BFBFBF"> No infrastructures found for monitoring </h3>
                             <button disabled
                                 ng-click="" 
                                 class="btn btn-primary"
                                 style="padding: 2px 5px; color:white; margin-top: 20px;">
-                                ⏏ &ThickSpace;Crear acuerdo&ThickSpace;
+                                ⏏ &ThickSpace;Create agreement&ThickSpace;
                             </button>
                         </div>
                     </div>
@@ -101,14 +101,14 @@
                         <a  ng-click="stop_monitoring(tpa.id);"
                             class="btn btn-danger"
                             style="position: absolute; left:10; top:10;padding: 2px 5px; color:white;">
-                            Dejar de Monitorear
+                            Stop monitoring
                         </a>
                         <div class="card-body">
                         <h3 class="card-title" style="padding-bottom: 20px;">{{tpa.name ? tpa.name:tpa.id}}</h3>
                             <ul>
                                 <!-- SLA -->
                                 <li style="padding: 0.5em; text-align: left; font-size: 18px;">
-                                    <p class="card-subtitle mb-2 text-muted" style="display: inline-block;">Ver acuerdo</p>
+                                    <p class="card-subtitle mb-2 text-muted" style="display: inline-block;">Agreement</p>
                                     <a href="./render?model=$_[infrastructure.internal.assets.default]/api/v1/public/renders/index/model.json&view=$_[infrastructure.internal.assets.default]/api/v1/public/renders/tpa/default.html&ctrl=$_[infrastructure.internal.assets.default]/api/v1/public/renders/tpa/default.js"
                                         target="_blank" class="btn btn-info"
                                         style="margin-left: 0.5em;padding: 0 5px; float: right; color:white;">
@@ -118,11 +118,11 @@
 
                                 <!-- COMPLETE VIEW -->
                                 <li style="padding-left: 1.5em; text-align: left;">
-									<p class="card-subtitle mb-2 text-muted" style="display: inline-block;" >Vista completa</p>
+									<p class="card-subtitle mb-2 text-muted" style="display: inline-block;" >Full view</p>
 									<a href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-individual-completo&var-Servicio=All&kiosk=tv&from=now-60d&to=now"
 									    target="_blank" class="btn btn-success"
 										style="margin-left: 0.5em; padding: 0 5px; float: right;">
-										Detallado
+										Detailed
 									</a>
 									<a href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-general-completo&var-Servicio=All&kiosk=tv&from=now-60d&to=now"
 										target="_blank" class="btn btn-success"
@@ -132,7 +132,7 @@
 									<a href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-agrupado-consejerias&var-Servicio=All&kiosk=tv&from=now-60d&to=now"
 										target="_blank" class="btn btn-success"
 										style="margin-left: 0.5em; padding: 0 5px; float: right;">
-										Agrupado servicios
+										Grouped by service
 									</a>
                                 </li>
 
@@ -143,7 +143,7 @@
 										href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-individual{{consejeria.urlVariables}}&var-Consejeria={{consejeria.name}}&kiosk=tv&from=now-60d&to=now"
 										class="btn btn-success"
 										style="margin-left: 0.5em; padding: 0 5px; float: right;">
-										Detallado
+										Detailed
 									</a>
 									<a target="_blank"
 										href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-general{{consejeria.urlVariables}}&var-Consejeria={{consejeria.name}}&kiosk=tv&from=now-60d&to=now"
