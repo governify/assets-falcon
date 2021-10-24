@@ -3,7 +3,7 @@ $scope.dbSelected = {};
 $scope.alertMsg = '';
 $scope.files;
 
-var buildTestPayload = (scriptText,scriptConfig) => {
+var buildPayload = (scriptText,scriptConfig) => {
     return { 
         "scriptText" : scriptText,
         "scriptConfig" : scriptConfig
@@ -12,7 +12,7 @@ var buildTestPayload = (scriptText,scriptConfig) => {
 
 $scope.loadDatabases = async () => {
     $scope.databases = [];
-    var res = await $http({
+    await $http({
         method: 'GET',
         url: '$_[infrastructure.external.render.default]/commons/infrastructure'
     }).then(async(res)=>{
@@ -20,26 +20,29 @@ $scope.loadDatabases = async () => {
         delete temp.default
 
         for(let value of Object.entries(temp)){
-            let dbType = value[1].startsWith('mongodb')? 'Mongo':'Influx'
-            
-            let url = '$_[infrastructure.external.assets.default]/api/v1/info/public/database/backups/'+value[0];
-            let records = (await $http.get(url).catch(()=>{
-                    return;
-                })).data.files.sort((a,b)=>{
-                    let res = new Date(a.lastModified) < new Date(b.lastModified)
-                    return res?1:-1
-                })
-            $scope.databases.push({
-                dbName: value[0],
-                dbUrl: value[1],
-                dbType,
-                records
-            });
+            try{
+                let dbType = value[1].startsWith('mongodb')? 'Mongo':'Influx'
+                
+                let url = '$_[infrastructure.external.assets.default]/api/v1/info/public/database/backups/'+value[0];
+                let records = (await $http.get(url).catch(()=>{
+                        return;
+                    })).data.files.sort((a,b)=>{
+                        let res = new Date(a.lastModified) < new Date(b.lastModified)
+                        return res?1:-1
+                    })
+                $scope.databases.push({
+                    dbName: value[0],
+                    dbUrl: value[1],
+                    dbType,
+                    records
+                });
+            }catch(_){
+                continue;
+            }
         }
     },(err)=>{
         console.error(err)
     })
-
 };
 
 $scope.loadDatabases()
@@ -55,66 +58,51 @@ async function getFromAssets(url){
 }
 
 $scope.makeBackup = async (db) => {
-    var nameDB = db.dbName,
-        urlDB  = db.dbUrl,
-        script,
+    var script,
         url;
 
     const urlTestScript = '$_[infrastructure.external.director.default]/api/v1/tasks/test';
 
-    if(urlDB.startsWith('mongodb')){
-        url = '$_[infrastructure.external.assets.default]/api/v1/public/database/mongoDBBackup.js';
+    url = '$_[infrastructure.external.assets.default]/api/v1/public/database/dbBackup.js';
 
-        script = await getFromAssets(url);
+    script = await getFromAssets(url);
 
-    }else{
-        url = '$_[infrastructure.external.assets.default]/api/v1/public/database/InfluxDBBackup.js';
-
-        script = await getFromAssets(url);
+    const dbConfig = {
+        dbName: db.dbName,
+        dbUrl: db.dbUrl,
+        dbType: db.dbType,
     }
 
-    const scriptConfig = {
-            "nameDB":nameDB,
-            "urlDB":urlDB
-        }
-
-    var bodyScriptTest = buildTestPayload(script,scriptConfig);
-
-    $http.post(urlTestScript,bodyScriptTest).then((res) => {
-        $scope.openAlert('backupAlert','La base de datos se esta salvando espere un poco y recargue','alert-primary');
-    }).catch(()=>{
+    var bodyScriptTest = buildPayload(script,dbConfig);
+    $http.post(urlTestScript,bodyScriptTest).then(() => {
+        $scope.openAlert('backupAlert','La base de datos se ha salvado correctamente','alert-primary');
+        $scope.loadDatabases()
+    }).catch((err)=>{
         $scope.openAlert('backupAlert','Algo ha ido mal pruebe de nuevo o compruebe el estado de los servicios','alert-danger');
-    })
+    })  
 }
 
 $scope.restoreBackup = async (db, backup) => {
-    var nameDB = db.dbName,
-        urlDB  = db.dbUrl,
-        script,
+    var script,
         url;
 
     const urlTestScript = '$_[infrastructure.external.director.default]/api/v1/tasks/test';
 
-    if(urlDB.startsWith('mongodb')){
-        url = '$_[infrastructure.external.assets.default]/api/v1/public/database/mongoDBRestore.js';
+    url = '$_[infrastructure.external.assets.default]/api/v1/public/database/dbRestore.js';
 
-        script = await getFromAssets(url);
-
-    }else{
-        url = '$_[infrastructure.external.assets.default]/api/v1/public/database/InfluxDBRestore.js';
-
-        script = await getFromAssets(url);
+    script = await getFromAssets(url);
+    
+    const dbConfig = {
+        dbName: db.dbName,
+        dbUrl: db.dbUrl,
+        dbType: db.dbType,
+        backup: backup.name
     }
 
-    const scriptConfig = {
-            "nameDB":nameDB,
-            "urlDB":urlDB,
-            "backup":backup.name
-        }
+    var bodyScriptTest = buildPayload(script,dbConfig);
 
-    var bodyScriptTest = buildTestPayload(script,scriptConfig);
-
-    $http.post(urlTestScript,bodyScriptTest).then((res) => {
+    console.log(bodyScriptTest)
+    $http.post(urlTestScript,bodyScriptTest).then(() => {
         $scope.openAlert('backupAlert','La base de datos se esta restaurando','alert-primary');
     }).catch(()=>{
         $scope.openAlert('backupAlert','Algo ha ido mal pruebe de nuevo o compruebe el estado de los servicios','alert-danger');
