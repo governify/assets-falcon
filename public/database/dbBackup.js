@@ -30,7 +30,7 @@ async function sendFile(file,config){
     var form = new FormData();
     form.append('file', fs.createReadStream(file),file);
 
-    await governify.httpClient.post('$_[infrastructure.internal.assets.default]'+'/api/v1/public/database/backups/'+config.dbName,form,{
+    await governify.httpClient.post('$_[infrastructure.internal.assets.default]'+'/api/v1/public/database/backups/'+config.dbName+"?createDirectories=true",form,{
         headers: {
             ...form.getHeaders()    
         },
