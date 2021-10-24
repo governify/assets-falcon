@@ -17,6 +17,9 @@ internal:
   dashboard:
     default: 'grafana'
     grafana: 'http://falcon-dashboard:3000'
+  director:
+    default: 'standard'
+    standard: 'http://galibo-director'
   database:
     default: 'mongo-registry'
     mongo-registry: 'mongodb://falcon-mongo-registry'
@@ -37,6 +40,9 @@ external:
   dashboard:
     default: 'grafana'
     grafana: 'https://dashboard{{dns.falcon}}'
+  director:
+    default: 'standard'
+    standard: 'https://director{{dns.falcon}}'
 dns:
   default: 'falcon'
   falcon: '$_[SERVICES_PREFIX]$_[DNS_SUFFIX]'
