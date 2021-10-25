@@ -95,7 +95,7 @@
                                 <div class="btn-group" style="float: right;" role="group" aria-label="Basic example">
                                     <button type="button" class="btn btn-success" ng-click="downloadBD(db.dbName,db.records[0])" ng-disabled="{{db.records.length === 0}}"><i class="fas fa-download"></i></button>
                                     <button type="button" class="btn btn-primary" 
-                                        data-bs-toggle="modal" data-bs-target="#registroModal" ng-click="loadRegister(db)">
+                                        data-bs-toggle="modal" data-bs-target="#registroModal" ng-click="loadRegister(db)" >
                                         Ver registro
                                     </button>
                                 </div>
@@ -105,7 +105,20 @@
                         </tr>
                     </tbody>
                 </table>
-                
+                <!-- LOADER -->
+                <div ng-if="processOngoing.loading"
+                    style="position:absolute;display: flex;left: 0;top: 0;bottom: 0;right: 0;z-index: 999;background-color: rgba(0,0,0,0.40);align-items: center;justify-content: center;">
+                    <div style="
+                        padding: 30px;
+                        background-color: rgb(189 189 189 / 75%);
+                        border-radius: 12px;
+                        ">
+                        <img src="./utils/img/loading1_big_lgbg.gif" style="height: 100px;" />
+                        <span style="font-size: 25px; margin-top: 10px" class="col-sm-12">
+                            {{processOngoing.text}}...
+                        </span>
+                    </div>
+                </div>
                 <!-- backups records Modal -->
                 <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel" aria-hidden="true">
                     <div class="modal-dialog">

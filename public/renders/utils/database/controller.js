@@ -2,6 +2,7 @@ $scope.databases = [];
 $scope.dbSelected = {};
 $scope.alertMsg = '';
 $scope.files;
+$scope.processOngoing = {text:'' , loading:false}
 
 var buildPayload = (scriptText,scriptConfig) => {
     return { 
@@ -21,8 +22,9 @@ $scope.loadDatabases = async () => {
 
         for(let value of Object.entries(temp)){
             try{
-                let dbType = value[1].startsWith('mongodb')? 'Mongo':'Influx'
-                
+                let dbTypeTemp = value[0].split('-')[0]
+                let dbType = dbTypeTemp.charAt(0).toUpperCase() + dbTypeTemp.slice(1); 
+                if(dbType !== 'Mongo' && dbType !== 'Influx') continue;
                 let url = '$_[infrastructure.external.assets.default]/api/v1/info/public/database/backups/'+value[0];
                 let records = []
                 await $http.get(url).then(data => {
@@ -75,12 +77,14 @@ $scope.makeBackup = async (db) => {
         dbUrl: db.dbUrl,
         dbType: db.dbType,
     }
-
+    $scope.processOngoing = {text:`Saving backup for ${db.dbName}` , loading:true}
     var bodyScriptTest = buildPayload(script,dbConfig);
     $http.post(urlTestScript,bodyScriptTest).then(() => {
+        $scope.processOngoing = {text:'' , loading:false}
         $scope.openAlert('backupAlert','La base de datos se ha salvado correctamente','alert-primary');
         $scope.loadDatabases()
     }).catch((err)=>{
+        $scope.processOngoing = {text:'' , loading:false}
         $scope.openAlert('backupAlert','Algo ha ido mal pruebe de nuevo o compruebe el estado de los servicios','alert-danger');
     })  
 }
@@ -103,11 +107,12 @@ $scope.restoreBackup = async (db, backup) => {
     }
 
     var bodyScriptTest = buildPayload(script,dbConfig);
-
-    console.log(bodyScriptTest)
+    $scope.processOngoing = {text:`Restoring ${db.dbName}` , loading:true}
     $http.post(urlTestScript,bodyScriptTest).then(() => {
-        $scope.openAlert('backupAlert','La base de datos se esta restaurando','alert-primary');
+        $scope.processOngoing = {text:'' , loading:false}
+        $scope.openAlert('backupAlert','La base de datos se ha restaurando correctamente','alert-primary');
     }).catch(()=>{
+        $scope.processOngoing = {text:'' , loading:false}
         $scope.openAlert('backupAlert','Algo ha ido mal pruebe de nuevo o compruebe el estado de los servicios','alert-danger');
     })
 }
@@ -151,6 +156,7 @@ $scope.submitFile = () =>{
     var url = '$_[infrastructure.external.assets.default]/api/v1/public/database/backups/' + $scope.dbSelected.dbName + "/";
 
     $http.post(url,fd,config).then(()=>{
+        $scope.loadDatabases()
         $scope.openAlert('backupAlert','Archivo subido correctamente','alert-primary');
     }).catch(err =>{ 
         console.error(err);
