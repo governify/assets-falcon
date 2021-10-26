@@ -153,7 +153,7 @@ $scope.submitFile = () =>{
     var config = { headers: { 'Content-Type': undefined },
                 transformResponse: angular.identity
                 };
-    var url = '$_[infrastructure.external.assets.default]/api/v1/public/database/backups/' + $scope.dbSelected.dbName + "/";
+    var url = '$_[infrastructure.external.assets.default]/api/v1/public/database/backups/' + $scope.dbSelected.dbName + "/?createDirectories=true";
 
     $http.post(url,fd,config).then(()=>{
         $scope.loadDatabases()
