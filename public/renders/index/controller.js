@@ -5,7 +5,7 @@ $scope.finishloading = false;
 async function load(){
     await load_registered_tpas().then(async registered_tpas => {
         await load_asset_tpas().then(asset_tpas => {
-            $scope.notmonitoring = asset_tpas.filter(assettpa => !registered_tpas.map(registeredtpa => registeredtpa.id).includes(assettpa.id));
+            $scope.notmonitoring = asset_tpas.filter(assettpa => !registered_tpas.map(registeredtpa => registeredtpa.id).includes(assettpa.data.id));
             $scope.alreadymonitoring = registered_tpas;
             $scope.finishloading = true
         });
@@ -30,7 +30,7 @@ function load_asset_tpas(){
                 url: `${assets_host}/${tpa_path}`
             }).then( jsonTPAResponse => {
                 if(jsonTPAResponse.data.id){
-                    asset_tpas.push(jsonTPAResponse.data)
+                    asset_tpas.push({source: tpa_path, data: jsonTPAResponse.data})
                 } else {
                     throw `${tpa_path} has no id`
                 }
@@ -82,16 +82,16 @@ $scope.start_monitoring = async function start_monitoring(tpa){
     var registered_list = await load_registered_tpas();
     var mongo_list = await load_mongo_tpas();
 
-    if(!mongo_list.map(el => el.id).includes(tpa.id)){
+    if(!mongo_list.map(el => el.id).includes(tpa.data.id)){
         prom.push( $http({
             method: 'POST',
             url: '$_[infrastructure.internal.registry.default]/api/v6/agreements',
-            data: tpa 
+            data: tpa.data 
         }));
     }
 
-    if(!registered_list.map(el => el.id).includes(tpa.id)) {
-        registered_list.push({id: tpa.id, name: tpa.name, services: tpa.context.definitions.group.services});
+    if(!registered_list.map(el => el.id).includes(tpa.data.id)) {
+        registered_list.push({id: tpa.data.id, name: tpa.data.name, services: tpa.data.context.definitions.group.services, source: tpa.source});
         prom.push( $http({
             method: 'PUT',
             url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json',

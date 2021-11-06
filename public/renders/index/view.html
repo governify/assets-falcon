@@ -54,7 +54,7 @@
                             <ul>
                                 <!-- SLA -->
                                 <li ng-repeat="tpa in notmonitoring" style="padding: 2px 0.5em; text-align: left; font-size: 18px;">
-                                    <p class="card-subtitle mb-2 text-muted" style="display: inline-block;">{{tpa.name ? tpa.name:tpa.id}}</p>
+                                    <p class="card-subtitle mb-2 text-muted" style="display: inline-block;">{{tpa.data.name ? tpa.data.name:tpa.data.id}}</p>
                                     <a  ng-click="start_monitoring(tpa);"
                                         class="btn btn-success"
                                         style="margin-left: 0.5em;padding: 0 5px; float: right; color:white;">
