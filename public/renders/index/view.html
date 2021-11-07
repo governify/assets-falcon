@@ -60,10 +60,10 @@
                                         style="margin-left: 0.5em;padding: 0 5px; float: right; color:white;">
                                         ▶ &ThickSpace;Start monitoring
                                     </a>
-                                    <a href="./render?model=$_[infrastructure.internal.assets.default]/api/v1/public/renders/index/model.json&view=$_[infrastructure.internal.assets.default]/api/v1/public/renders/tpa/default.html&ctrl=$_[infrastructure.internal.assets.default]/api/v1/public/renders/tpa/default.js"
+                                    <a href="$_[infrastructure.external.assets.default]/api/v1/{{tpa.source}}"
                                         target="_blank" class="btn btn-info"
                                         style="margin-left: 0.5em;padding: 0 5px; float: right; color:white;">
-                                        ANS
+                                        Vew Source
                                     </a>
                                 </li>
                             </ul>
@@ -109,7 +109,7 @@
                                 <!-- SLA -->
                                 <li style="padding: 0.5em; text-align: left; font-size: 18px;">
                                     <p class="card-subtitle mb-2 text-muted" style="display: inline-block;">Agreement</p>
-                                    <a href="./render?model=$_[infrastructure.internal.assets.default]/api/v1/public/renders/index/model.json&view=$_[infrastructure.internal.assets.default]/api/v1/public/renders/tpa/default.html&ctrl=$_[infrastructure.internal.assets.default]/api/v1/public/renders/tpa/default.js"
+                                    <a href="./render?model=$_[infrastructure.internal.assets.default]/api/v1/{{tpa.source}}&view=$_[infrastructure.internal.assets.default]/api/v1/public/renders/tpa/default.html&ctrl=$_[infrastructure.internal.assets.default]/api/v1/public/renders/tpa/default.js"
                                         target="_blank" class="btn btn-info"
                                         style="margin-left: 0.5em;padding: 0 5px; float: right; color:white;">
                                         ANS

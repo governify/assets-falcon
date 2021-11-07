@@ -71,10 +71,10 @@
 
                             <label>Period starting date:</label><br />
                             <input type="datetime-local" ng-model="calculateMetrics.from"
-                                value="{{calculateMetrics.from}}" class="form-control"><br />
+                                class="form-control"><br />
 
                             <label>Period end date:</label><br />
-                            <input type="datetime-local" ng-model="calculateMetrics.to" value="{{calculateMetrics.to}}"
+                            <input type="datetime-local" ng-model="calculateMetrics.to"
                                 class="form-control"><br />
 
                             <div class="form-check">
@@ -106,7 +106,7 @@
                 </div>
             </div>
 
-            <!-- ---------------- Top Bluejay Hero ---------------- -->
+            <!-- ---------------- Top Falcon Hero ---------------- -->
             <div class="title" style="padding: 55px 0; margin: 0; display:flex; justify-content: center;">
 				<div onclick='location.href="/"' style="cursor: pointer;">
 					<h2>FALCON</h2>
@@ -126,7 +126,7 @@
 				{{displayItems.statusMessage}}
 			</div>
 
-            <!-- ---------------- Project Loader ---------------- -->
+            <!-- ---------------- Infrastructure Loader ---------------- -->
             <div ng-if="!modelLoaded"
                 style="position:absolute; left:50%; top:60%; margin-left: -171px; margin-top: -72px;">
                 <img src="./utils/img/loading1_big_lgbg.gif" style="height: 100px;" />
@@ -140,22 +140,14 @@
                     <div class="col-xs-12 col-md-5" style="zoom: 0.75;text-align: left;width:max-content;">
                         <div>
                             <h2>
-                                Project name:
-                                {{displayItems.scopeManagerInfo.scope.name ? displayItems.scopeManagerInfo.scope.name : displayItems.scopeManagerInfo.scope.projectId}}
+                                <b>Project name:</b>
+                                {{displayItems.infrastructureInfo.name ? displayItems.infrastructureInfo.name : displayItems.infrastructureInfo.id}}
                             </h2>
                             <h3>
-                                TPA: {{model.id}}
+                                <b>TPA:</b> {{model.id}}
                             </h3>
                         </div>
                         <div>
-                            <span>
-                                <strong>APIs being used:</strong>
-                            </span>
-                            {{!displayItems.scopeManagerInfo.scope.identities ? 'Data could not be retrieved.' : ''}}
-                            <span
-                                ng-repeat="api in displayItems.scopeManagerInfo.scope.identities">{{api.source}}{{$last ? "" : ", "}}
-                            </span>
-                            <br>
                             <span>
                                 <strong>Collectors being used:</strong>
                             </span>

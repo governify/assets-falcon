@@ -1,10 +1,10 @@
 // Display items and error alert
 $scope.displayItems = {
-    "statusMessage": '',
-    "statusType": undefined,
-    "scopeManagerInfo": {},
-    "automaticComputation": false,
-    "automaticComputationInfo": { id: 123, status: "stopped", script: "/asdf/script.js" }
+    statusMessage: '',
+    statusType: undefined,
+    infrastructureInfo: {},
+    automaticComputation: false,
+    automaticComputationInfo: { id: 123, status: "stopped", script: "/asdf/script.js" }
 };
 
 const setPageAlert = (message, type) => {
@@ -15,21 +15,20 @@ const setPageAlert = (message, type) => {
 }
 
 //Calculate Metrics button modal
-$scope.dateNowISO = new Date().toISOString().match(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d/g)[0];
 $scope.calculateMetrics = {
-    "timezone": "GMT-8:00",
-    "timezones": [],
-    "from": new Date(Date.parse("2021-01-18T00:00:00")),
-    "to": new Date(Date.parse("2021-03-01T23:59:59")),
-    "agree": false,
-    "message": "",
-    "error": false
+    timezone: "GMT-8:00",
+    timezones: [],
+    from: new Date("2021-01-18T00:00:00"),
+    to: new Date("2021-03-01T23:59:59"),
+    agree: false,
+    message: "",
+    error: false
 }
 
 const defaultDirectorRunTime = {
-    "init": "2021-01-01T00:00:00",
-    "end": "2021-04-01T00:00:00",
-    "interval": 7200000
+    init: "2021-01-01T00:00:00",
+    end: "2021-04-01T00:00:00",
+    interval: 7200000
 }
 
 $scope.swapAutomaticComputation = () => {
@@ -97,61 +96,50 @@ const init = () => {
             $scope.calculateMetrics.timezones.push("GMT" + (i < 0 ? "-" : "+") + Math.abs(i) + ":00")
         }
 
-        //Get project Info from scopeManager
-        getUrl(
-            "$_[infrastructure.external.scopes.default]/api/v1/scopes/development/" + $scope.model.context.definitions.scopes.development.class.default + "/" + $scope.model.context.definitions.scopes.development.project.default,
-            (err, data) => {
-                if (data) {
-                    if (data.code == 200) {
-                        $scope.displayItems.scopeManagerInfo = data;
-                    } else {
-                        setPageAlert("No project found in ScopeManager with the specified scope (Some data will not be displayed).", "warn");
-                    }
-                }
-                else {
-                    setPageAlert("Error when retrieving information from Scope Manager (Some data will not be displayed).", "warn");
-                }
-                $scope.modelLoaded = $scope.modelLoaded == false ? true : false;
-                $scope.$apply();
-            }
-        );
+        //Get infrastructure info from assets
+        $http({
+            method: 'GET',
+            url: "$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json",
+            params: {private_key: '$_[PRIVATE_KEY]'}
+        }).then(response => {
+            $scope.displayItems.infrastructureInfo = response.data.filter(item => item.id === $scope.model.id)[0];
+        }).catch(err => {
+            setPageAlert("Could not get infrastructure information.", "error");
+            console.log(err);
+        }).then(() => {
+            $scope.modelLoaded = $scope.modelLoaded == false ? true : false 
+        });
 
         //Get existing agreement from mongo
-        getUrl(
-            "$_[infrastructure.external.registry.default]/api/v6/agreements/" + $scope.model.id,
-            (err, data) => {
-                if (data) {
-                    console.info("Loaded agreement from mongo.")
-                    $scope.model = data;
-                    $scope.collectorsUsed = Object.keys($scope.model.context.definitions.collectors);
+        $http({
+            method: 'GET',
+            url: `$_[infrastructure.external.registry.default]/api/v6/agreements/${$scope.model.id}`
+        }).then(response => {
+            console.info("Loaded agreement from mongo.")
+            $scope.model = response.data;
+            $scope.collectorsUsed = Object.keys($scope.model.context.definitions.collectors);
+            
+            //Get computation information from director
+            $http({
+                method: 'GET',
+                url: `$_[infrastructure.external.director.default]/api/v1/tasks/${$scope.model.id}`,
+            }).then( directorResponse => {
+                console.info("Loaded execution from director.");
+                $scope.displayItems.automaticComputation = true;
+                $scope.displayItems.automaticComputationInfo = directorResponse.data;
+            }).catch( directorErr => {
+                if (directorErr.status !== 404) console.log(directorErr);
+                $scope.displayItems.automaticComputation = false;
+                $scope.displayItems.automaticComputationInfo = {};
 
-                    //Get computation information from director
-                    getUrl(
-                        "$_[infrastructure.external.director.default]/api/v1/tasks/" + $scope.model.id,
-                        (err, data) => {
-                            if (err) {
-                                $scope.displayItems.automaticComputation = false;
-                                $scope.displayItems.automaticComputationInfo = {};
-                                /* if (err.status === 404) {
-                                    $scope.displayItems.automaticComputation = false;
-                                } */
-                            }
-                            if (data) {
-                                console.info("Loaded execution from director.");
-                                $scope.displayItems.automaticComputation = true;
-                                $scope.displayItems.automaticComputationInfo = data;
-                            }
-                            $scope.$apply();
-                        }
-                    );
-                } else {
-                    setPageAlert("No agreement found in mongo.", "error");
-                    console.info("No agreement found in mongo, loaded default.");
-                    $scope.$apply();
-                }
-                $scope.modelLoaded = $scope.modelLoaded == false ? true : false;
-            }
-        );
+            });
+        }).catch(err => {
+            if (directorErr.status !== 404) console.log(err);
+            setPageAlert("No agreement found in mongo.", "error");
+        }).then( () => {
+            $scope.modelLoaded = $scope.modelLoaded == false ? true : false;
+        });
+        
     } catch (err) {
         $scope.modelLoaded = true;
         console.log(err);
@@ -160,7 +148,6 @@ const init = () => {
         } else {
             setPageAlert("Undefined Error.", "error");
         }
-        $scope.$apply();
     }
 }
 
@@ -220,23 +207,6 @@ $scope.calculateEventsMetrics = function (id) {
         setModalAlert("Undefined error.");
     }
 }
-
-/**
- * GET request for https URLs
- * @param url 
- * @param callback 
- */
-var getUrl = (url, callback) => {
-    $.get(url, function (data) {
-        if (callback) {
-            callback(null, data);
-        }
-    }).fail(function (err) {
-        if (callback) {
-            callback(err, null);
-        }
-    });
-};
 
 /**
  * POST request for https URLs
