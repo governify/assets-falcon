@@ -25,67 +25,61 @@ $scope.calculateMetrics = {
     error: false
 }
 
-const defaultDirectorRunTime = {
-    init: "2021-01-01T00:00:00",
-    end: "2021-04-01T00:00:00",
-    interval: 7200000
-}
-
 $scope.swapAutomaticComputation = () => {
     if ($scope.displayItems.automaticComputation) {
-        try {
-            deleteUrl("$_[infrastructure.external.director.default]/api/v1/tasks/" + $scope.model.id, (err, data) => {
-                // Reporter not answering properly
-                if (err) {
-                    setPageAlert("Automatic computation task could not be deactivated.", "error");
-                    console.log(err)
-                } else {
-                    $scope.displayItems.automaticComputation = false;
-                    $scope.displayItems.automaticComputationInfo = {};
-                    $scope.$apply();
-                }
-            });
-        } catch (err) {
+        $http({
+            method: 'DELETE',
+            url: `$_[infrastructure.external.director.default]/api/v1/tasks/${$scope.model.id}`
+        }).then(() => {
+            $scope.displayItems.automaticComputation = false;
+            $scope.displayItems.automaticComputationInfo = {};
+        }).catch(err => {
             setPageAlert("Automatic computation task could not be deactivated.", "error");
-            console.log(err)
-
-        }
+            console.log(err);
+        });
     } else {
-        try {
-            getUrl(
-                "$_[infrastructure.external.assets.default]/api/v1/public/director/" + $scope.model.context.definitions.scopes.development.class.default + ".json",
-                (err, data) => {
-                    if (err) {
-                        console.log("Director run time could not be found: ", $scope.model.context.definitions.scopes.development.class.default + ".json\n", err);
-                    }
-                    const task = {
-                        "id": $scope.model.id,
-                        "script": "$_[infrastructure.external.assets.default]/api/v1/public/director/" + $scope.model.context.definitions.scopes.development.class.default + ".js",
-                        "running": true,
-                        "config": {
-                            "agreementId": $scope.model.id
-                        },
-                        "init": data ? data.init : "2021-01-01T00:00:00",
-                        "end": data ? data.end : "2021-04-01T00:00:00",
-                        "interval": data ? data.interval : 7200000
-                    }
-                    postUrl("$_[infrastructure.external.director.default]/api/v1/tasks", task, (err, data) => {
-                        // Reporter not answering properly
-                        if (err) {
-                            setPageAlert("Automatic computation task could not be activated.", "error");
-                            console.log(err)
-                        } else {
-                            $scope.displayItems.automaticComputation = true;
-                            $scope.displayItems.automaticComputationInfo = data;
-                            $scope.$apply();
-                        }
-                    });
+        const path = $scope.displayItems.infrastructureInfo.source;
+        const file = path.substring(path.lastIndexOf("/") + 1).split(".")[0];
+        $http({
+            method: 'GET',
+            url: `$_[infrastructure.external.assets.default]/api/v1/info/public/director/${file}.js`
+        }).then( async () => {
+            let nextYear = new Date();
+            nextYear.setFullYear(nextYear.getFullYear() + 1);
+            
+            let data = await $http({
+                method: 'GET',
+                url: `$_[infrastructure.external.assets.default]/api/v1/public/director/${file}.json`
+            }).then(response => response.data)
+            .catch(() => {return undefined});
+            
+            const task = {
+                id: $scope.model.id,
+                script: `${script}.js`,
+                running: true,
+                config: { agreementId: $scope.model.id },
+                init: data && data.init ? data.init : new Date().toISOString(),
+                end: data && data.end ? data.end : nextYear.toISOString(),
+                interval: data && data.interval ? data.interval : 7200000
+            };
 
-                });
-        } catch (err) {
-            setPageAlert("Automatic computation task could not be activated.", "error");
-            console.log(err)
-        }
+            $http({
+                method: 'POST',
+                url: `$_[infrastructure.external.director.default]/api/v1/tasks`,
+                headers: { 'Content-Type': 'application/json' },
+                data: task
+            }).then( directorResponse => {
+                console.log(`Automatic computation activated until ${task.end}`);
+                $scope.displayItems.automaticComputation = true;
+                $scope.displayItems.automaticComputationInfo = directorResponse.data;
+            }).catch( err => {
+                setPageAlert("Automatic computation task could not be activated.", "error");
+                console.log(err)
+            });
+        }).catch(err => {
+            if (err.status !== 404) console.log(err);
+            setPageAlert("Automatic computation task could not be activated: Director script not found", "error");
+        });
     }
 }
 
@@ -99,7 +93,7 @@ const init = () => {
         //Get infrastructure info from assets
         $http({
             method: 'GET',
-            url: "$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json",
+            url: "$_[infrastructure.external.assets.default]/api/v1/private/monitoring/infrastructures.json",
             params: {private_key: '$_[PRIVATE_KEY]'}
         }).then(response => {
             $scope.displayItems.infrastructureInfo = response.data.filter(item => item.id === $scope.model.id)[0];
@@ -241,32 +235,6 @@ var postUrl = (url, data, callback) => {
     }
 
     $.ajax(body).fail(function (err) {
-        console.error(err);
-        if (callback) {
-            callback(err);
-        }
-    });
-};
-
-/**
- * DELETE request for https URLs
- * @param url 
- * @param callback 
- */
-var deleteUrl = (url, data, callback) => {
-    if (!callback && data) {
-        callback = data;
-    }
-
-    $.ajax({
-        url: url,
-        type: "DELETE",
-        success: (data) => {
-            if (callback) {
-                callback(null, data);
-            }
-        }
-    }).fail(function (err) {
         console.error(err);
         if (callback) {
             callback(err);
