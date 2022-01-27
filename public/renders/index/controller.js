@@ -91,7 +91,7 @@ $scope.start_monitoring = async function start_monitoring(tpa){
     }
 
     if(!registered_list.map(el => el.id).includes(tpa.data.id)) {
-        registered_list.push({id: tpa.data.id, name: tpa.data.name, services: Object.keys(tpa.data.context.definitions.group.services), source: tpa.source});
+        registered_list.push({id: tpa.data.id, name: tpa.data.name, services: Object.keys(tpa.data.context.definitions.services), source: tpa.source});
         prom.push( $http({
             method: 'PUT',
             url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json',

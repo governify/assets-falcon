@@ -14,15 +14,19 @@ async function applyStep (dsl, period, inputs, responseList) {
       params: params,
       method: inputs.request.method,
       body: inputs.request.body
-    }).then(response => { return response.data; }).catch(console.log);
+    })
+    .then(response => { return response.data; })
+    .catch(err => { reject(err) });
 
     var resultList = _.get(res, inputs.result.valueAddress);
     var finalResult = [];
+
     resultList.forEach(rs => {
       var newScope = Object.assign({}, dsl.metric.scope);
       newScope.service = rs.metric[inputs.result.scopeKey];
-      var metricResult = _avg(rs.values.map(vals => vals[1]).filter(val => val != "NaN"));
-      finalResult.push({ evidences : rs.values, metric: metricResult, scope: newScope });
+      let evidences = rs.values.map(pair => {return {time: pair[0], value: pair[1]}}).filter(val => val.value != "NaN")
+      var metricResult = _avg(evidences.map(ev => ev.value));
+      finalResult.push({ evidences : evidences, metric: metricResult, scope: newScope });
     });
     // Add the result to the current result from previous steps.
     var resultConcat = responseList.concat(finalResult);

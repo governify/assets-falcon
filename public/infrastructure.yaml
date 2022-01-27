@@ -20,6 +20,9 @@ internal:
   director:
     default: 'standard'
     standard: 'http://galibo-director'
+  prometheus:
+    default: 'standard'
+    standard: 'http://falcon-prometheus:9090'
   database:
     default: 'mongo-registry'
     mongo-registry: 'mongodb://falcon-mongo-registry'
