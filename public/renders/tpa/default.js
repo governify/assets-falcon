@@ -77,7 +77,7 @@ $scope.swapAutomaticComputation = () => {
     if ($scope.displayItems.automaticComputation) {
         $http({
             method: 'DELETE',
-            url: `$_[infrastructure.external.director.default]/api/v1/tasks/${$scope.model.id}`
+            url: `$_[infrastructure.internal.director.default]/api/v1/tasks/${$scope.model.id}`
         }).then(() => {
             $scope.displayItems.automaticComputation = false;
             $scope.displayItems.automaticComputationInfo = {};
@@ -86,29 +86,27 @@ $scope.swapAutomaticComputation = () => {
             console.log(err);
         });
     } else {
-        const path = $scope.displayItems.infrastructureInfo.source;
-        const file = path.substring(path.lastIndexOf("/") + 1).split(".")[0];
         $http({
             method: 'GET',
-            url: `$_[infrastructure.external.assets.default]/api/v1/info/public/director/${file}.js`
+            url: `$_[infrastructure.internal.assets.default]/api/v1/info/public/director/calculate.js`
         }).then( async () => {
             let nextYear = new Date();
             nextYear.setFullYear(nextYear.getFullYear() + 1);
             
             let data = await $http({
                 method: 'GET',
-                url: `$_[infrastructure.external.assets.default]/api/v1/public/director/${file}.json`
+                url: `$_[infrastructure.internal.assets.default]/api/v1/public/director/calculate.json`
             }).then(response => response.data)
             .catch(() => {return undefined});
             
             const task = {
                 id: $scope.model.id,
-                script: `${script}.js`,
+                script: `$_[infrastructure.internal.assets.default]/api/v1/public/director/calculate.js`,
                 running: true,
                 config: { agreementId: $scope.model.id },
                 init: data && data.init ? data.init : new Date().toISOString(),
                 end: data && data.end ? data.end : nextYear.toISOString(),
-                interval: data && data.interval ? data.interval : 7200000
+                interval: data && data.interval ? data.interval : 3600000
             };
 
             $http({
