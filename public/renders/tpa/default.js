@@ -99,14 +99,18 @@ $scope.swapAutomaticComputation = () => {
             }).then(response => response.data)
             .catch(() => {return undefined});
             
+            let interval = data && data.interval ? data.interval : 3600000;
             const task = {
                 id: $scope.model.id,
                 script: `$_[infrastructure.internal.assets.default]/api/v1/public/director/calculate.js`,
                 running: true,
-                config: { agreementId: $scope.model.id },
+                config: { 
+                    agreementId: $scope.model.id,
+                    interval: interval
+                },
                 init: data && data.init ? data.init : new Date().toISOString(),
                 end: data && data.end ? data.end : nextYear.toISOString(),
-                interval: data && data.interval ? data.interval : 3600000
+                interval: interval
             };
 
             $http({
