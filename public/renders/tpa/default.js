@@ -7,17 +7,6 @@ $scope.displayItems = {
     automaticComputationInfo: { id: 123, status: "stopped", script: "/asdf/script.js" }
 };
 
-//Calculate Metrics button modal
-$scope.calculateMetrics = {
-    timezone: "GMT-8:00",
-    timezones: [],
-    from: new Date(new Date().toISOString().split('T')[0] + "T00:00:00"),
-    to: new Date(new Date().toISOString().split('T')[0] + "T23:59:59"),
-    agree: false,
-    message: "",
-    error: false
-}
-
 // Helper: create alerts in page
 const setPageAlert = (message, type) => {
     if (type === "error" || $scope.displayItems.statusType !== "error") {
@@ -29,10 +18,6 @@ const setPageAlert = (message, type) => {
 // This function is called at the end of the code
 const init = () => {
     try {
-        for (let i = -11; i < 15; i++) {
-            $scope.calculateMetrics.timezones.push("GMT" + (i < 0 ? "-" : "+") + Math.abs(i) + ":00")
-        }
-
         //Get infrastructure info from assets
         $http({
             method: 'GET',
@@ -151,61 +136,28 @@ $scope.beautifyMetric = (metric) => {
 }
 
 $scope.calculateEventsMetrics = function (id) {
-    
-    //Helper alert function
-    const setModalAlert = (message, error = true) => { 
-        $scope.calculateMetrics.message = message; 
-        $scope.calculateMetrics.error = error; 
-    }
-
-    try {
-        setModalAlert("");
-        if ($scope.calculateMetrics.agree) {
-            if (!$scope.calculateMetrics.from || !$scope.calculateMetrics.to) {
-                setModalAlert("Invalid date.");
-            } else {
-                // Periods generation
-                var firstDateOffset = new Date(Date.parse($scope.calculateMetrics.from.toISOString())).getTimezoneOffset();
-                var firstDate = Date.parse($scope.calculateMetrics.from.toISOString()) - firstDateOffset * 60 * 1000;
-
-                var lastDateOffset = new Date(Date.parse($scope.calculateMetrics.to.toISOString())).getTimezoneOffset();
-                var lastDate = Date.parse($scope.calculateMetrics.to.toISOString()) - lastDateOffset * 60 * 1000;
-
-                console.log("Input", $scope.calculateMetrics.to.toISOString());
-                console.log("UTC", new Date(lastDate).toISOString());
-
-                var periodDifference = lastDate - firstDate;
-                var timezoneOffset = $scope.calculateMetrics.timezone.split("T")[1].split(":")[0] * 60 * 60 * 1000;
-
-                if (periodDifference <= 0) {
-                    setModalAlert("End date must be higher than start date.");
-                } else {
-                    setModalAlert("TPA data is being generated for the period.", false);
-                    $http({
-                        method: 'POST',
-                        url: `$_[infrastructure.external.reporter.default]/api/v4/contracts/${id}/createPointsFromPeriods`,
-                        headers: { 'Content-Type': 'application/json' },
-                        data: { 
-                            periods: [{
-                                from: new Date(firstDate - timezoneOffset).toISOString(),
-                                to: new Date(lastDate - timezoneOffset - 1).toISOString()
-                            }] 
-                        }
-                    }).then( () => {
-                        setModalAlert("TPA data generated successfully", false);
-                    }).catch( (err) => {
-                        console.log(err);
-                        setModalAlert("TPA data could not be generated.", true);
-                    });                   
-                }
-            }
-        } else {
-            setModalAlert("You must agree to delete old information.");
-        }
-    } catch (err) {
-        console.log(err)
-        setModalAlert("Undefined error.");
-    }
+    var proceed = confirm('WARN: All prevoius data will be deleted and recalculated. Continue?');
+    if (proceed) {
+        setPageAlert("TPA data is being generated for the period.", false);
+        $http({
+            method: 'POST',
+            url: `$_[infrastructure.external.reporter.default]/api/v4/contracts/${id}/reset`,
+            data: {},
+            headers: { 'Content-Type': 'application/json' }
+        }).then(() => {
+            $http({
+                method: 'POST',
+                url: `$_[infrastructure.external.reporter.default]/api/v4/contracts/${id}/createHistory`,
+                headers: { 'Content-Type': 'application/json' },
+                data: {division: "daily"}
+            }).catch( (err) => {
+                console.log(err);
+                setPageAlert("TPA data could not be generated.", 'error');
+            }); 
+        }).catch( (err) => {
+            console.log(err)
+        });
+    }      
 }
 
 init();

@@ -119,38 +119,16 @@
                                 <!-- COMPLETE VIEW -->
                                 <li style="padding-left: 1.5em; text-align: left;">
 									<p class="card-subtitle mb-2 text-muted" style="display: inline-block;" >Full view</p>
-									<a href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-individual-completo&var-Servicio=All&kiosk=tv&from=now-60d&to=now"
-									    target="_blank" class="btn btn-success"
-										style="margin-left: 0.5em; padding: 0 5px; float: right;">
-										Detailed
-									</a>
-									<a href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-general-completo&var-Servicio=All&kiosk=tv&from=now-60d&to=now"
+									<a href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/{{ tpa.id }}/group-by-service"
 										target="_blank" class="btn btn-success"
 										style="margin-left: 0.5em; padding: 0 5px; float: right;">
-										General
-									</a>
-									<a href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-agrupado-consejerias&var-Servicio=All&kiosk=tv&from=now-60d&to=now"
-										target="_blank" class="btn btn-success"
-										style="margin-left: 0.5em; padding: 0 5px; float: right;">
-										Grouped by service
+										Dashboard
 									</a>
                                 </li>
 
                                 <!-- SERVICES -->
                                 <li ng-repeat="service in tpa.services" style="padding: 0.20em; margin-left:2.0em; text-align: left; display:block">									
 									<i>◽&ThickSpace;&ThickSpace;{{service}}</i>
-									<a target="_blank"
-										href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-individual{{consejeria.urlVariables}}&var-Consejeria={{consejeria.name}}&kiosk=tv&from=now-60d&to=now"
-										class="btn btn-success"
-										style="margin-left: 0.5em; padding: 0 5px; float: right;">
-										Detailed
-									</a>
-									<a target="_blank"
-										href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/nexo_cc_ans/galibo-general{{consejeria.urlVariables}}&var-Consejeria={{consejeria.name}}&kiosk=tv&from=now-60d&to=now"
-										class="btn btn-success"
-										style="margin-left: 0.5em; padding: 0 5px; float: right;">
-										General
-									</a>
 								</li>
                             </ul>
                         </div>

@@ -25,7 +25,7 @@ async function applyStep (dsl, period, inputs, responseList) {
       var newScope = Object.assign({}, dsl.metric.scope);
       newScope.service = rs.metric[inputs.result.scopeKey];
       let evidences = rs.values.map(pair => {return {time: pair[0], value: pair[1]}}).filter(val => val.value != "NaN")
-      var metricResult = _avg(evidences.map(ev => ev.value));
+      var metricResult = _avg(evidences.map(ev => parseFloat(ev.value)));
       finalResult.push({ evidences : evidences, metric: metricResult, scope: newScope });
     });
     // Add the result to the current result from previous steps.

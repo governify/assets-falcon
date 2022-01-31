@@ -29,7 +29,7 @@
                 <!-- Right -->
                 <span class="col-xs-offset-9" style="position:absolute; top:10px; right:10px; margin:0;">
                     <a target="_blank"
-                        href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/{{model.id}}/main"
+                        href="$_[infrastructure.external.dashboard.default]/dashboard/script/dashboardLoader.js?dashboardURL=$_[infrastructure.external.reporter.default]/api/v4/dashboards/{{model.id}}/group-by-service"
                         class="btn btn-success btn-sm">
                         Dashboard
                     </a>
@@ -44,66 +44,9 @@
                             </span>
                     </button>
 
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#metricsModal">Calculate Metrics</button>
+                    <button type="button" class="btn btn-primary btn-sm" 
+                        ng-click="calculateEventsMetrics(model.id)">Calculate Metrics</button>
                 </span>
-            </div>
-            
-            <!-- ---------------- Calculate metrics Modal ---------------- -->
-            <div id="metricsModal" class="modal fade" role="dialog" style="display: none;">
-                <div class="modal-dialog" style="max-width: 400px;">
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" style="margin-left: 3rem;">Calculate metrics for a period (UTC)</h4>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-
-                        <!-- Form -->
-                        <div class="modal-body" style="text-align: left;">
-                            <label>Timezone offset:</label><br />
-                            <select ng-model="calculateMetrics.timezone" class="form-control">
-                                <option ng-repeat="timezone in calculateMetrics.timezones" value="{{timezone}}">
-                                    {{timezone}}
-                                </option>
-                            </select>
-                            <br />
-
-                            <label>Period starting date:</label><br />
-                            <input type="datetime-local" ng-model="calculateMetrics.from"
-                                class="form-control"><br />
-
-                            <label>Period end date:</label><br />
-                            <input type="datetime-local" ng-model="calculateMetrics.to"
-                                class="form-control"><br />
-
-                            <div class="form-check">
-                                <span>
-                                    <input type="checkbox" ng-model="calculateMetrics.agree" id="agreeCheck">
-                                    <label class="form-check-label" for="agreeCheck" style="margin-left: 3px; font-weight: bold;">I agree
-                                        to substitute existing TPA data.</label>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <!-- Alert -->
-                            <div class="alert {{calculateMetrics.error ? 'alert-danger' : 'alert-success'}}"
-                                ng-if="calculateMetrics.message" role="alert" style="text-align: left; width: 100%;">
-                                <span
-                                    class="glyphicon {{calculateMetrics.error ? 'glyphicon-exclamation-sign' : 'glyphicon-ok-sign'}}"
-                                    aria-hidden="true"></span>
-                                {{calculateMetrics.message}}
-                            </div>
-                            <!-- Buttons -->
-                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
-                            <a ng-click="calculateEventsMetrics(model.id)"
-                                class="btn {{calculateMetrics.message == 'TPA data is being generated for the period.' ? 'btn-warning disabled' : 'btn-primary'}} {{calculateMetrics.agree ? '' : 'disabled'}}">
-                                {{calculateMetrics.message == 'TPA data is being generated for the period.' ? 'In progress' : 'Compute'}}
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- ---------------- Top Falcon Hero ---------------- -->
