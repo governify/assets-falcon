@@ -12,7 +12,7 @@
       }
     ]
   },
-  "editable": true,
+  "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
   "id": 2,
@@ -41,7 +41,7 @@
       "fieldConfig": {
         "defaults": {
           "mappings": [],
-          "max": 100,
+          "max": 500,
           "min": 0,
           "thresholds": {
             "mode": "absolute",

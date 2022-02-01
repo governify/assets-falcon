@@ -25,9 +25,9 @@ function modifyJSON(jsonDashboard, agreement, dashboardName){
                 .replace(/"\$\{threshold\}"/g, 
                     parseFloat(guarantee.of[0].objective.split("<")[1] || guarantee.of[0].objective.split("<=")[1]) / 1000)
                 .replace(/"\$\{threshold_gauge_yellow\}"/g, 
-                    parseFloat(guarantee.of[0].objective.split("<")[1] || guarantee.of[0].objective.split("<=")[1]) / 2000 * 100)
+                    parseFloat(guarantee.of[0].objective.split("<")[1] || guarantee.of[0].objective.split("<=")[1]) * 0.70)
                 .replace(/"\$\{threshold_gauge_red\}"/g, 
-                    parseFloat(guarantee.of[0].objective.split("<")[1] || guarantee.of[0].objective.split("<=")[1]) / 1000 * 100);
+                    parseFloat(guarantee.of[0].objective.split("<")[1] || guarantee.of[0].objective.split("<=")[1]));
         }
         else if([">", ">="].some(str => guarantee.of[0].objective.includes(str))) {
             newpanels = newpanels
@@ -35,9 +35,9 @@ function modifyJSON(jsonDashboard, agreement, dashboardName){
                 .replace(/"\$\{threshold\}"/g, 
                     parseFloat(guarantee.of[0].objective.split(">")[1] || guarantee.of[0].objective.split(">=")[1]) / 1000)
                 .replace(/"\$\{threshold_gauge_yellow\}"/g, 
-                    parseFloat(guarantee.of[0].objective.split(">")[1] || guarantee.of[0].objective.split(">=")[1]) / 2000 * 100)
+                    parseFloat(guarantee.of[0].objective.split(">")[1] || guarantee.of[0].objective.split(">=")[1]) * 0.70)
                 .replace(/"\$\{threshold_gauge_red\}"/g, 
-                    parseFloat(guarantee.of[0].objective.split(">")[1] || guarantee.of[0].objective.split(">=")[1]) / 1000 * 100);
+                    parseFloat(guarantee.of[0].objective.split(">")[1] || guarantee.of[0].objective.split(">=")[1]));
         }
         newpanels = JSON.parse(newpanels);
 
