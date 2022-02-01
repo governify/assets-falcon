@@ -77,7 +77,7 @@ $scope.swapAutomaticComputation = () => {
     if ($scope.displayItems.automaticComputation) {
         $http({
             method: 'DELETE',
-            url: `$_[infrastructure.internal.director.default]/api/v1/tasks/${$scope.model.id}`
+            url: `$_[infrastructure.external.director.default]/api/v1/tasks/${$scope.model.id}`
         }).then(() => {
             $scope.displayItems.automaticComputation = false;
             $scope.displayItems.automaticComputationInfo = {};
@@ -88,21 +88,21 @@ $scope.swapAutomaticComputation = () => {
     } else {
         $http({
             method: 'GET',
-            url: `$_[infrastructure.internal.assets.default]/api/v1/info/public/director/calculate.js`
+            url: `$_[infrastructure.external.assets.default]/api/v1/info/public/director/calculate.js`
         }).then( async () => {
             let nextYear = new Date();
             nextYear.setFullYear(nextYear.getFullYear() + 1);
             
             let data = await $http({
                 method: 'GET',
-                url: `$_[infrastructure.internal.assets.default]/api/v1/public/director/calculate.json`
+                url: `$_[infrastructure.external.assets.default]/api/v1/public/director/calculate.json`
             }).then(response => response.data)
             .catch(() => {return undefined});
             
             let interval = data && data.interval ? data.interval : 3600000;
             const task = {
                 id: $scope.model.id,
-                script: `$_[infrastructure.internal.assets.default]/api/v1/public/director/calculate.js`,
+                script: `$_[infrastructure.external.assets.default]/api/v1/public/director/calculate.js`,
                 running: true,
                 config: { 
                     agreementId: $scope.model.id,

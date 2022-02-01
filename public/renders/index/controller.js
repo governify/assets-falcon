@@ -15,7 +15,7 @@ async function load(){
 /* Request assetmanager for each json tpa inside tpa directory
    and return array with {name, id} of each one */
 function load_asset_tpas(){
-    var assets_host = '$_[infrastructure.internal.assets.default]/api/v1'
+    var assets_host = '$_[infrastructure.external.assets.default]/api/v1'
     var tpa_folder = 'public/renders/tpa/agreements';
 
     return $http({
@@ -48,7 +48,7 @@ function load_asset_tpas(){
 function load_registered_tpas(){
     return $http({
         method: 'GET',
-        url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json',
+        url: '$_[infrastructure.external.assets.default]/api/v1/private/monitoring/infrastructures.json',
         params: {private_key: '$_[PRIVATE_KEY]'}
     }).then(response => {
         return response.data;
@@ -56,7 +56,7 @@ function load_registered_tpas(){
         if(err.status === 404){
             $http({
                 method: 'POST',
-                url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json',
+                url: '$_[infrastructure.external.assets.default]/api/v1/private/monitoring/infrastructures.json',
                 params: {private_key: '$_[PRIVATE_KEY]', createDirectories: true},
                 headers: {contentType: 'application/json'},
                 data: []
@@ -69,7 +69,7 @@ function load_registered_tpas(){
 function load_mongo_tpas(){
     return $http({
         method: 'GET',
-        url: '$_[infrastructure.internal.registry.default]/api/v6/agreements'
+        url: '$_[infrastructure.external.registry.default]/api/v6/agreements'
     }).then(response => {
         return response.data;
     }).catch(err => {
@@ -85,7 +85,7 @@ $scope.start_monitoring = async function start_monitoring(tpa){
     if(!mongo_list.map(el => el.id).includes(tpa.data.id)){
         prom.push( $http({
             method: 'POST',
-            url: '$_[infrastructure.internal.registry.default]/api/v6/agreements',
+            url: '$_[infrastructure.external.registry.default]/api/v6/agreements',
             data: tpa.data 
         }));
     }
@@ -94,7 +94,7 @@ $scope.start_monitoring = async function start_monitoring(tpa){
         registered_list.push({id: tpa.data.id, name: tpa.data.name, services: Object.keys(tpa.data.context.definitions.services), source: tpa.source});
         prom.push( $http({
             method: 'PUT',
-            url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json',
+            url: '$_[infrastructure.external.assets.default]/api/v1/private/monitoring/infrastructures.json',
             params: {private_key: '$_[PRIVATE_KEY]'},
             headers: {contentType: 'application/json'},
             data: registered_list,
@@ -108,13 +108,13 @@ $scope.stop_monitoring = async function stop_monitoring(tpa_id){
 
     prom.push( $http({
         method: 'DELETE',
-        url: `$_[infrastructure.internal.registry.default]/api/v6/agreements/${tpa_id}`,
+        url: `$_[infrastructure.external.registry.default]/api/v6/agreements/${tpa_id}`,
     }));
 
     var registered_list = await load_registered_tpas().then(res => res.filter(el => el.id !== tpa_id));
     prom.push( $http({
         method: 'PUT',
-        url: '$_[infrastructure.internal.assets.default]/api/v1/private/monitoring/infrastructures.json',
+        url: '$_[infrastructure.external.assets.default]/api/v1/private/monitoring/infrastructures.json',
         params: {private_key: '$_[PRIVATE_KEY]'},
         headers: {contentType: 'application/json'},
         data: registered_list,
