@@ -19,7 +19,7 @@ internal:
     grafana: 'http://falcon-dashboard:3000'
   director:
     default: 'standard'
-    standard: 'http://galibo-director'
+    standard: 'http://falcon-director'
   prometheus:
     default: 'standard'
     standard: 'http://falcon-prometheus:9090'
