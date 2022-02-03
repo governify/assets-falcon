@@ -102,7 +102,7 @@ $scope.swapAutomaticComputation = () => {
             let interval = data && data.interval ? data.interval : 3600000;
             const task = {
                 id: $scope.model.id,
-                script: `$_[infrastructure.external.assets.default]/api/v1/public/director/calculate.js`,
+                script: `$_[infrastructure.internal.assets.default]/api/v1/public/director/calculate.js`,
                 running: true,
                 config: { 
                     agreementId: $scope.model.id,
